@@ -288,11 +288,20 @@ maybeBrackets _ = Nothing
 bracketNames :: String -> Maybe ([Names],String)
 bracketNames s = case (maybeBrackets s) of
                     Just (t,u) -> case (readListNames t) of
-                                    Just ns -> case u of
-                                                (' ' : v) -> Just (ns,v)
-                                                _ -> Nothing
+                                    Just ns -> Just (ns,u)
                                     Nothing -> Nothing
                     Nothing -> Nothing
+
+stripSpace :: String -> Maybe String
+stripSpace (' ' : rest) = Just rest
+stripSpace _ = Nothing
+
+bracketNamestrip :: String -> Maybe ([Names],String)
+bracketNamestrip s = case (bracketNames s) of
+                        Just (ns,s) -> case stripSpace s of 
+                                        Just t -> Just (ns,t)
+                                        Nothing -> Nothing
+                        Nothing -> Nothing
 
 hline :: String
 hline = "___________________________________________"
@@ -406,7 +415,7 @@ gettactic s rest ('w' : 'e' : 'a' : 'k' : 'e' : 'n' : ' ' : str) = case (readNam
                                                                                 Nothing -> printErr (s:rest)
                                                                     Nothing -> printErr (s:rest)
 
-gettactic s rest ('a' : 'p' : 'p' : 'l' : 'y' : ' ' : str) = case (bracketNames str) of
+gettactic s rest ('a' : 'p' : 'p' : 'l' : 'y' : ' ' : str) = case (bracketNamestrip str) of
                                                                 Just (ns,r) -> case (readName r) of
                                                                                 Just n -> case (applytac s n ns) of
                                                                                             Just (t,u) -> thmmode (t:u:rest)
@@ -414,7 +423,7 @@ gettactic s rest ('a' : 'p' : 'p' : 'l' : 'y' : ' ' : str) = case (bracketNames 
                                                                                 Nothing -> printErr (s:rest)
                                                                 Nothing -> printErr (s:rest)
 
-gettactic s rest ('c' : 'u' : 't' : ' ' : str) = case (bracketNames str) of
+gettactic s rest ('c' : 'u' : 't' : ' ' : str) = case (bracketNamestrip str) of
                                                     Just (ns,r) -> case (readForm r) of
                                                                     Just p -> case (cuttac s p ns) of
                                                                                 Just (t,u) -> thmmode (t:u:rest)
