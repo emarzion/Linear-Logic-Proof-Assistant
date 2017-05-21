@@ -46,11 +46,11 @@ The goals and sequencts can be modified using tactics:
 
 This will remove the top sequent when there is exactly one assumption which matches the goal:
 
-    H : A
+    H : P
 
     _______
 
-    A
+    P
 
 is removed.
 
@@ -209,3 +209,166 @@ and
     _______
     Q
 
+**`cut P [H1 ... Hn]`**
+
+Creates two proof branches, the first of which has goal `P` and assumptions `H1,...,Hn`, and the second with the original goal, with the remaining original assumptions along with `P` as assumptions:
+
+    H1 : P1
+    ...
+    Hn : Pn
+    Hn+1 : Pn+1
+    ...
+    Hn+k : Pn+k
+    _______
+    Q
+
+is replaced by both
+
+    H1 : P1
+    ...
+    Hn : Pn
+    _______
+    P
+
+and
+
+    Hn+1 : Pn+1
+    ...
+    Hn+k : Pn+k
+    H : P
+    _______
+    Q
+
+**`left H`**
+
+When `H` is a `&`, replaces `H` with the left conjunct:
+
+    ...
+    H : P & Q
+    _______
+    R
+
+is replaced by
+
+    ...
+    H : P
+    _______
+    R
+
+**`right H`**
+
+When `H` is a `&`, replaces `H` with the right conjunct:
+
+    ...
+    H : P & Q
+    _______
+    R
+
+is replaced by
+
+    ...
+    H : Q
+    _______
+    R
+
+**`destruct H` (for `*`)**
+
+When `H` is a `*`, replaces `H` with both conjuncts:
+
+    ...
+    H : P * Q
+    _______
+    R
+
+is replaced by
+
+    ...
+    H1 : P
+    H2 : Q
+    _______
+    R
+
+**`destruct H` (for `+`)**
+
+When `H` is a `+`, creates two proof branches where `H` is replaced by each disjunct:
+
+    ...
+    H : P + Q
+    _______
+    R
+
+is replaced by
+
+    ...
+    H : P
+    _______
+    R
+
+and
+
+    ...
+    H : Q
+    _______
+    R
+
+**`apply H [H1 .. Hn]`**
+
+When `H` is a `-o`, creates two proof branches, the first of which whose goal is the antecedent of `H` and with assumptions `H1,...,Hn`, and the second of which with the original goal, and with assumptions which are the remaining original assumptions along with the consequent of `H`:
+
+    H1 : P1
+    ...
+    Hn : Pn
+    Hn+1 : Pn+1
+    ...
+    Hn+k : Pn+k
+    H : P -o Q
+    _______
+    R
+
+is replaced by both
+
+    H1 : P1
+    ...
+    Hn : Pn
+    _______
+    P
+
+and
+
+    Hn+1 : Pn+1
+    ...
+    Hn+k : Pn+k
+    H : Q
+    _______
+    R
+
+**`derelict H`**
+When `H` is a `!`, removes the `!` from `H`:
+
+    ...
+    H : !P
+    _______
+    Q
+
+is replaced by
+
+    ...
+    H : P
+    _______
+    Q
+
+**`duplicate H`**
+When `H` is a `!`, creates a new copy of `H`:
+
+    ...
+    H : !P
+    _______
+    Q
+
+is replaced by
+
+    ...
+    H : !P
+    H1 : !P
+    _______
+    Q
